@@ -12,6 +12,9 @@ jobs:
     permissions:
       id-token: write
       pages: write
+    concurrency:
+      group: build
+      cancel-in-progress: true
     steps:
       - name: Checkout
         uses: actions/checkout@v2
