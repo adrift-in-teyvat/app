@@ -1,5 +1,12 @@
-@import url("https://fonts.googleapis.com/css2?family=Funnel+Sans:ital,wght@0,300..800;1,300..800&display=swap");
 @import "tailwindcss";
+
+@font-face {
+  font-family: 'HYWenHei-85W';
+  font-style: normal;
+  font-weight: 300 800;
+  font-display: auto;
+  src: url("HYWenHei-85W.woff2");
+}
 
 :root {
   --dot-bg: #0f0f0f;
@@ -7,7 +14,7 @@
   --dot-size: 1px;
   --dot-space: 30px;
 
-  font-family: "Funnel Sans", sans-serif;
+  font-family: "HYWenHei-85W", sans-serif;
   font-optical-sizing: auto;
   font-style: normal;
 
