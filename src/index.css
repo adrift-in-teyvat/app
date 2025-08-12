@@ -1,12 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Funnel+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Funnel+Sans:ital,wght@0,300..800;1,300..800&display=swap");
 @import "tailwindcss";
 
 :root {
-  --dot-bg: #0F0F0F;
-  --dot-color: #525151a6 ;
+  --dot-bg: #0f0f0f;
+  --dot-color: #525151a6;
   --dot-size: 1px;
   --dot-space: 30px;
-  
+
   font-family: "Funnel Sans", sans-serif;
   font-optical-sizing: auto;
   font-style: normal;
@@ -16,12 +16,20 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #0F0F0F;
-  
-  background:
-	linear-gradient(90deg, var(--dot-bg) calc(var(--dot-space) - var(--dot-size)), transparent 1%) center / var(--dot-space) var(--dot-space),
-	linear-gradient(var(--dot-bg) calc(var(--dot-space) - var(--dot-size)), transparent 1%) center / var(--dot-space) var(--dot-space),
-	var(--dot-color);
+  background-color: #0f0f0f;
+
+  background: linear-gradient(
+        90deg,
+        var(--dot-bg) calc(var(--dot-space) - var(--dot-size)),
+        transparent 1%
+      )
+      center / var(--dot-space) var(--dot-space),
+    linear-gradient(
+        var(--dot-bg) calc(var(--dot-space) - var(--dot-size)),
+        transparent 1%
+      )
+      center / var(--dot-space) var(--dot-space),
+    var(--dot-color);
 
   user-select: none;
 
@@ -29,21 +37,21 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  @apply min-h-screen min-w-screen
+  @apply min-h-screen min-w-screen;
 }
 
 h1 {
-  @apply text-5xl dark:text-white text-black
+  @apply text-5xl dark:text-white text-black;
 }
 
 button {
-  @apply rounded-lg dark:bg-sky-600 dark:hover:bg-sky-400 
+  @apply rounded-lg dark:bg-sky-600 dark:hover:bg-sky-400;
 }
 
 p {
-  @apply text-lg dark:text-zinc-400 text-zinc-200
+  @apply text-lg dark:text-zinc-400 text-zinc-200;
 }
 
 a {
-  @apply underline text-blue-400 hover:text-blue-300 rounded-md transition-colors duration-500 p-0.5
+  @apply underline text-blue-400 hover:text-blue-300 rounded-md transition-colors duration-500 p-0.5;
 }

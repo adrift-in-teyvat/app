@@ -5,7 +5,7 @@ import { motion } from "motion/react";
 function Home() {
   return (
     <>
-      <div className="flex flex-col w-screen h-screen px-5 py-3.5">
+      <div className="flex flex-col px-5 py-3.5 w-screen h-screen">
         <motion.div
           initial={{ opacity: 0, scale: 1 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -13,7 +13,8 @@ function Home() {
             duration: 0.5,
             scale: { type: "spring", visualDuration: 0.4, bounce: 0.5 },
           }}
-          className="flex flex-1 justify-center items-center grow flex-col gap-2">
+          className="flex flex-col flex-1 justify-center items-center gap-2 grow"
+        >
           <h1 className="text-center">Adrift In Teyvat</h1>
           <p>Coming Soon...</p>
           <Link to="/game">Test</Link>

@@ -1,13 +1,11 @@
-import '../index.css';
+import "../index.css";
 
 function Map() {
-    return(
-        <>
-            <div className="cursor-crosshair">
-
-            </div>
-        </>
-    )
+  return (
+    <>
+      <div className="cursor-crosshair"></div>
+    </>
+  );
 }
 
 export default Map;
