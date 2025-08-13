@@ -21,7 +21,7 @@ function Home() {
         </motion.div>
         <motion.div className="flex justify-center items-center">
           <p>
-            ©2025 <Link to="https://github.com/Shob3r">Shob3r</Link> &{" "}
+            Made By <Link to="https://github.com/Shob3r">Shob3r</Link> &{" "}
             <Link to="https://github.com/ChakornK">ChakornK</Link>
           </p>
         </motion.div>
