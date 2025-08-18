@@ -13,8 +13,7 @@ function Home() {
             duration: 0.5,
             scale: { type: "spring", visualDuration: 0.4, bounce: 0.5 },
           }}
-          className="flex flex-col flex-1 justify-center items-center gap-2 grow"
-        >
+          className="flex flex-col flex-1 justify-center items-center gap-2 grow">
           <h1 className="text-center">Adrift In Teyvat</h1>
           <p>Coming Soon...</p>
           <Link to="/game">Test</Link>

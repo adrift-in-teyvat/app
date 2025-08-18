@@ -3,6 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
+  "license": "AGPL-3.0-only",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -29,5 +30,6 @@
     "typescript": "^5.9.2",
     "vite": "^7.1.2"
   },
+  
   "packageManager": "yarn@4.9.2"
 }
