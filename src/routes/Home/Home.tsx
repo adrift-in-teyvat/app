@@ -1,31 +1,14 @@
-import { Link } from "react-router";
 import "../../index.css";
-import { motion } from "motion/react";
+import { HomePageBg, HomePageText } from "../../Components/HomePageBg";
 
 function Home() {
   return (
-    <>
-      <div className="flex flex-col px-5 py-3.5 w-screen h-screen">
-        <motion.div
-          initial={{ opacity: 0, scale: 1 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{
-            duration: 0.5,
-            scale: { type: "spring", visualDuration: 0.4, bounce: 0.5 },
-          }}
-          className="flex flex-col flex-1 justify-center items-center gap-2 grow">
-          <h1 className="text-center">Adrift In Teyvat</h1>
-          <p>Coming Soon...</p>
-          <Link to="/game">Test</Link>
-        </motion.div>
-        <motion.div className="flex justify-center items-center">
-          <p>
-            Made By <Link to="https://github.com/Shob3r">Shob3r</Link> &{" "}
-            <Link to="https://github.com/ChakornK">ChakornK</Link>
-          </p>
-        </motion.div>
+    <div className="bg-stone-700">
+      <div className="relative m-auto w-screen max-w-[calc(5/3*100vh)] h-dscreen overflow-hidden">
+        <HomePageBg />
+        <HomePageText />
       </div>
-    </>
+    </div>
   );
 }
 export default Home;
