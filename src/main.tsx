@@ -1,17 +1,32 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
+import {
+  LocationProvider,
+  Router,
+  Route,
+  hydrate,
+  prerender as ssr,
+} from "preact-iso";
+
 import "./index.css";
 import Home from "./routes/Home/Home.tsx";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Game from "./routes/Game/Game.tsx";
 
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />}></Route>
-        <Route path="Game" element={<Game />}></Route>
-      </Routes>
-    </BrowserRouter>
-  </StrictMode>
-);
+export const App = () => {
+  return (
+    <LocationProvider>
+      <main>
+        <Router>
+          <Route path="/" component={Home} />
+          <Route path="/game" component={Game} />
+        </Router>
+      </main>
+    </LocationProvider>
+  );
+};
+
+if (typeof window !== "undefined") {
+  hydrate(<App />, document.getElementById("app")!);
+}
+
+export async function prerender(data: Record<string, any>) {
+  return await ssr(<App {...data} />);
+}

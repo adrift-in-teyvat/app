@@ -1,7 +1,7 @@
 import '../index.css';
 import * as PIXI from 'pixi.js';
 import { Viewport } from 'pixi-viewport';
-import { useEffect } from 'react';
+import { useEffect } from "preact/hooks";
 
 const giMapTiles ='https://cdn.jsdelivr.net/gh/adrift-in-teyvat/map-tiles@main';
 const zoomLevelLinks = ['10', '11', '12', '13', '14', '15'];
