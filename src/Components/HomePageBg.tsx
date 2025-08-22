@@ -208,6 +208,7 @@ export const HomePageBg = () => {
                   duration: 4,
                   ease: "easeInOut",
                   repeat: Infinity,
+                  delay: 2.5,
                 }}
                 style={{
                   originX: "55%",
@@ -256,7 +257,7 @@ export const HomePageBg = () => {
                     duration: 4,
                     ease: "easeInOut",
                     repeat: Infinity,
-                    delay: 1,
+                    delay: 3,
                   }}
                   style={{
                     originX: "100%",
@@ -285,7 +286,7 @@ export const HomePageBg = () => {
                     duration: 4,
                     ease: "easeInOut",
                     repeat: Infinity,
-                    delay: 1,
+                    delay: 3,
                   }}
                   style={{
                     originX: "50%",
