@@ -45,8 +45,8 @@
   fill: #edc0b7;
 }
 
-.bd,
-.be {
+.aw,
+.bd {
   opacity: 0.2;
 }
 
@@ -106,4 +106,9 @@
 
 .bq {
   fill: #ffdacc;
+}
+
+/* force gpu render */
+svg {
+  transform: translateZ(1px);
 }
