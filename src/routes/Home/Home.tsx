@@ -7,10 +7,7 @@ function Home() {
 
   return (
     <div className="bg-stone-700">
-      <div
-        className="relative m-auto w-screen max-w-[calc(5/3*100vh)] h-dscreen overflow-hidden *:pointer-events-none"
-        onClick={() => router.route("/game")}
-      >
+      <div className="relative m-auto w-screen max-w-[calc(5/3*100vh)] h-dscreen overflow-hidden *:pointer-events-none" onClick={() => router.route("/game")}>
         <HomePageBg />
         <HomePageText />
       </div>

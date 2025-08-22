@@ -1,6 +1,6 @@
-import '../../index.css';
-import { motion } from 'motion/react';
-import { Map } from '../../Components/Map';
+import "../../index.css";
+import { motion } from "motion/react";
+import { Map } from "../../Components/Map";
 
 function Game() {
   return (

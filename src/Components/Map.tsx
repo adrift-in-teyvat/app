@@ -1,10 +1,10 @@
-import '../index.css';
-import * as PIXI from 'pixi.js';
-import { Viewport } from 'pixi-viewport';
+import "../index.css";
+import * as PIXI from "pixi.js";
+import { Viewport } from "pixi-viewport";
 import { useEffect } from "preact/hooks";
 
-const giMapTiles ='https://cdn.jsdelivr.net/gh/adrift-in-teyvat/map-tiles@main';
-const zoomLevelLinks = ['10', '11', '12', '13', '14', '15'];
+const giMapTiles = "https://cdn.jsdelivr.net/gh/adrift-in-teyvat/map-tiles@main";
+const zoomLevelLinks = ["10", "11", "12", "13", "14", "15"];
 const teyvatTiles = `${giMapTiles}/teyvat`;
 let currentZoom = 0;
 
@@ -34,14 +34,16 @@ function drawMap(viewport: Viewport) {
 export function Map() {
   useEffect(() => {
     const app = new PIXI.Application();
-    app.init({
-        background: '#000000',
+    app
+      .init({
+        background: "#000000",
         resizeTo: document.body,
         antialias: true,
         autoDensity: true,
         resolution: window.devicePixelRatio,
-      }).then(() => {
-        const container = document.getElementById('map-container') as HTMLDivElement;
+      })
+      .then(() => {
+        const container = document.getElementById("map-container") as HTMLDivElement;
         container.appendChild(app.canvas);
 
         const viewport = new Viewport({
@@ -49,23 +51,23 @@ export function Map() {
           screenHeight: window.innerHeight,
           events: app.renderer.events,
         });
-        viewport.addListener('drag-end', () => drawMap(viewport));
-        viewport.addListener('moved', () => "")
-        viewport.addListener('zoomed-end', () => {
-          currentZoom = Math.round(viewport.scale.x / 2 );
+        viewport.addListener("drag-end", () => drawMap(viewport));
+        viewport.addListener("moved", () => "");
+        viewport.addListener("zoomed-end", () => {
+          currentZoom = Math.round(viewport.scale.x / 2);
           drawMap(viewport);
-        })
+        });
         viewport.cullable = true;
 
         app.stage.addChild(viewport);
-        viewport.drag().pinch().wheel().decelerate().setZoom(1).clampZoom({ maxScale: 12, minScale: 0});
+        viewport.drag().pinch().wheel().decelerate().setZoom(1).clampZoom({ maxScale: 12, minScale: 0 });
         drawMap(viewport);
       });
   }, []);
 
   return (
     <>
-      <div id="map-container" className="w-screen h-screen overflow-hidden"/>
+      <div id="map-container" className="w-screen h-screen overflow-hidden" />
     </>
   );
 }
