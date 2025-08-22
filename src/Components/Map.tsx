@@ -17,7 +17,7 @@ function drawMap(viewport: Viewport) {
     let y = viewport.bottom - i * 256;
 
     for (let j = 0; j <= wTiles; j++) {
-      const url = `${teyvatTiles}/${zoomLevelLinks[currentZoom]}/${Math.ceil(x / 256)}_${-Math.ceil(y / 256)}.webp`;
+      const url = `${teyvatTiles}/${zoomLevelLinks[currentZoom]}/${Math.ceil(x / 256)}_${-Math.ceil(y / 256)}.jpg`;
 
       const loadImage = async (targetX: number, targetY: number) => {
         const texture = await PIXI.Assets.load(url);
