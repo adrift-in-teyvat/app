@@ -11,10 +11,10 @@ export const HomePageBg = () => {
         <defs>
           <linearGradient
             id="d"
-            x1="960"
-            y1="963"
-            x2="960"
-            y2="-16"
+            x1="0"
+            y1="100%"
+            x2="0"
+            y2="0%"
             gradientUnits="userSpaceOnUse"
           >
             <stop offset="0" stopColor="#fff1db" />
