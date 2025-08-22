@@ -124,12 +124,13 @@ export function Map() {
           }
         });
         viewport.addListener("zoomed-end", () => {
-          currentZoom = Math.max(0, Math.min(5, Math.round((viewport.scale.x + 2) / 4)));
+          // clamp between level 0 and level 4, level 5 disallowed for performance reasons
+          currentZoom = Math.max(0, Math.min(4, Math.round((viewport.scale.x + 2) / 4)));
           throttledDrawMap(viewport, layers, currentZoom);
         });
 
         app.stage.addChild(viewport);
-        viewport.drag().pinch().wheel().decelerate().setZoom(1).clampZoom({ maxScale: 20, minScale: 1 });
+        viewport.drag().pinch().wheel().decelerate().setZoom(1).clampZoom({ maxScale: 18, minScale: 1 });
         drawMap(viewport, layers, currentZoom);
         setInterval(() => {
           if (!viewport.moving) return;
