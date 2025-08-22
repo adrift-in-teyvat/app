@@ -25,7 +25,14 @@ export const HomePageBg = () => {
             <stop offset="1" stopColor="#8eaad9" />
           </linearGradient>
         </defs>
-        <rect className="ax" width="100%" height="100%" />
+        <motion.rect
+          className="ax"
+          width="100%"
+          height="100%"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, type: "tween", delay: 0.3 }}
+        />
       </svg>
 
       <svg

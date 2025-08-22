@@ -108,6 +108,10 @@
   fill: #ffdacc;
 }
 
+.br {
+  fill: #fff;
+}
+
 /* force gpu render */
 svg {
   transform: translateZ(1px);
