@@ -34,42 +34,50 @@ const tileRanges = [
 const zoomLevelSizes = [256, 128, 64, 32, 16, 8];
 const teyvatTiles = `${giMapTiles}/teyvat`;
 let currentZoom = 0;
+// stored in form of `${zoomLevel}_${x}_${y}`
+const tiles: Record<string, PIXI.Graphics> = {};
 
-function drawMap(viewport: Viewport) {
-  viewport.removeChildren();
-  const xMin = Math.floor(viewport.left / zoomLevelSizes[currentZoom]);
-  const xMax = Math.ceil(viewport.right / zoomLevelSizes[currentZoom]);
-  const yMin = Math.floor(viewport.top / zoomLevelSizes[currentZoom]);
-  const yMax = Math.ceil(viewport.bottom / zoomLevelSizes[currentZoom]);
+function drawMap(viewport: Viewport, layers: PIXI.Container[], zoom: number) {
+  const xMin = Math.floor(viewport.left / zoomLevelSizes[zoom]);
+  const xMax = Math.ceil(viewport.right / zoomLevelSizes[zoom]);
+  const yMin = Math.floor(viewport.top / zoomLevelSizes[zoom]);
+  const yMax = Math.ceil(viewport.bottom / zoomLevelSizes[zoom]);
   const xCount = xMax - xMin;
   const yCount = yMax - yMin;
   const xTiles = Array.from({ length: xCount * 2 + 1 }, (_, i) => xMin + i).filter((n) => {
-    const [min, max] = tileRanges[currentZoom].x;
+    const [min, max] = tileRanges[zoom].x;
     return n >= min && n <= max;
   });
   const yTiles = Array.from({ length: yCount * 2 + 1 }, (_, i) => -1 * (yMin + i)).filter((n) => {
-    const [min, max] = tileRanges[currentZoom].y;
+    const [min, max] = tileRanges[zoom].y;
     return n >= min && n <= max;
   });
+
+  for (const i in layers) {
+    layers[i].visible = zoom === +i;
+  }
+
   for (const x of xTiles) {
-    let xPos = zoomLevelSizes[currentZoom] * x;
+    let xPos = zoomLevelSizes[zoom] * x;
 
     for (const y of yTiles) {
-      const yPos = -1 * zoomLevelSizes[currentZoom] * (y + 1);
+      const yPos = -1 * zoomLevelSizes[zoom] * (y + 1);
 
-      const url = `${teyvatTiles}/${zoomLevelLinks[currentZoom]}/${x}_${y}.jpg`;
+      const url = `${teyvatTiles}/${zoomLevelLinks[zoom]}/${x}_${y}.jpg`;
 
-      (async (z) => {
-        await PIXI.Assets.load(url);
-        if (z !== currentZoom) {
-          return;
+      (async () => {
+        let tile = tiles[`${zoom}_${x}_${y}`];
+        if (!tile) {
+          await PIXI.Assets.load(url);
+          tile = new PIXI.Graphics();
+          tile.cullable = true;
+          tile.texture(PIXI.Assets.get(url));
+          layers[zoom].addChild(tile);
+          tile.position.set(xPos, yPos);
+          tile.setSize(zoomLevelSizes[zoom], zoomLevelSizes[zoom]);
+          tiles[`${zoom}_${x}_${y}`] = tile;
         }
-        const tile = new PIXI.Graphics();
-        tile.texture(PIXI.Assets.get(url));
-        viewport.addChild(tile);
-        tile.position.set(xPos, yPos);
-        tile.setSize(zoomLevelSizes[currentZoom], zoomLevelSizes[currentZoom]);
-      })(currentZoom);
+      })();
     }
   }
 }
@@ -94,6 +102,13 @@ export function Map() {
           screenHeight: window.innerHeight,
           events: app.renderer.events,
         });
+
+        const layers: PIXI.Container[] = [];
+        for (const i in zoomLevelSizes) {
+          layers[i] = new PIXI.Container();
+          viewport.addChild(layers[i]);
+        }
+
         let isDragging = false;
         viewport.addListener("drag-start", () => {
           isDragging = true;
@@ -102,16 +117,18 @@ export function Map() {
           isDragging = false;
         });
         viewport.addListener("pointermove", () => {
-          drawMap(viewport);
+          if (isDragging) {
+            drawMap(viewport, layers, currentZoom);
+          }
         });
         viewport.addListener("zoomed-end", () => {
           currentZoom = Math.max(0, Math.min(5, Math.round((viewport.scale.x + 2) / 4)));
-          drawMap(viewport);
+          drawMap(viewport, layers, currentZoom);
         });
 
         app.stage.addChild(viewport);
         viewport.drag().pinch().wheel().decelerate().setZoom(1).clampZoom({ maxScale: 12, minScale: 0 });
-        drawMap(viewport);
+        drawMap(viewport, layers, currentZoom);
       });
   }, []);
 
