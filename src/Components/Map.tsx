@@ -2,6 +2,7 @@ import "../index.css";
 import * as PIXI from "pixi.js";
 import { Viewport } from "pixi-viewport";
 import { useEffect } from "preact/hooks";
+import { throttle } from "../utils/throttle";
 
 const giMapTiles = "https://cdn.jsdelivr.net/gh/adrift-in-teyvat/map-tiles@refs/heads/main";
 const zoomLevelLinks = ["10", "11", "12", "13", "14", "15"];
@@ -37,7 +38,7 @@ let currentZoom = 0;
 // stored in form of `${zoomLevel}_${x}_${y}`
 const tiles: Record<string, PIXI.Graphics> = {};
 
-function drawMap(viewport: Viewport, layers: PIXI.Container[], zoom: number) {
+const drawMap = (viewport: Viewport, layers: PIXI.Container[], zoom: number) => {
   const xMin = Math.floor(viewport.left / zoomLevelSizes[zoom]);
   const xMax = Math.ceil(viewport.right / zoomLevelSizes[zoom]);
   const yMin = Math.floor(viewport.top / zoomLevelSizes[zoom]);
@@ -80,7 +81,8 @@ function drawMap(viewport: Viewport, layers: PIXI.Container[], zoom: number) {
       })();
     }
   }
-}
+};
+const throttledDrawMap = throttle(drawMap, 100);
 
 export function Map() {
   useEffect(() => {
@@ -118,17 +120,21 @@ export function Map() {
         });
         viewport.addListener("pointermove", () => {
           if (isDragging) {
-            drawMap(viewport, layers, currentZoom);
+            throttledDrawMap(viewport, layers, currentZoom);
           }
         });
         viewport.addListener("zoomed-end", () => {
           currentZoom = Math.max(0, Math.min(5, Math.round((viewport.scale.x + 2) / 4)));
-          drawMap(viewport, layers, currentZoom);
+          throttledDrawMap(viewport, layers, currentZoom);
         });
 
         app.stage.addChild(viewport);
-        viewport.drag().pinch().wheel().decelerate().setZoom(1).clampZoom({ maxScale: 12, minScale: 0 });
+        viewport.drag().pinch().wheel().decelerate().setZoom(1).clampZoom({ maxScale: 20, minScale: 1 });
         drawMap(viewport, layers, currentZoom);
+        setInterval(() => {
+          if (!viewport.moving) return;
+          throttledDrawMap(viewport, layers, currentZoom);
+        }, 100);
       });
   }, []);
 
