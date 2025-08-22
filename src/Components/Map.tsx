@@ -125,7 +125,7 @@ export function Map() {
         });
         viewport.addListener("zoomed-end", () => {
           // clamp between level 0 and level 4, level 5 disallowed for performance reasons
-          currentZoom = Math.max(0, Math.min(4, Math.round((viewport.scale.x + 2) / 4)));
+          currentZoom = Math.max(0, Math.min(4, Math.round(viewport.scale.x / 2)));
           throttledDrawMap(viewport, layers, currentZoom);
         });
 
