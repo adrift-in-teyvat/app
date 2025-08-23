@@ -85,7 +85,6 @@ const drawMap = (viewport: Viewport, layers: PIXI.Container[], zoom: number) => 
       const [min, max] = tileRanges[zoom].y;
       return n >= min && n <= max;
     });
-  console.log(yTiles);
 
   for (const i in layers) {
     layers[i].visible = zoom >= +i;
@@ -130,6 +129,7 @@ export function Map() {
         container.appendChild(app.canvas);
 
         const viewport = new Viewport({
+          allowPreserveDragOutside: true,
           screenWidth: window.innerWidth,
           screenHeight: window.innerHeight,
           events: app.renderer.events,
@@ -161,6 +161,11 @@ export function Map() {
 
         app.stage.addChild(viewport);
         viewport.drag().pinch().wheel().decelerate().setZoom(1).clampZoom({ maxScale: 18, minScale: 1 });
+        app.renderer.addListener("resize", () => {
+          viewport.screenHeight = window.innerHeight;
+          viewport.screenWidth = window.innerWidth;
+        });
+
         drawMap(viewport, layers, currentZoom);
         setInterval(() => {
           if (!viewport.moving) return;
