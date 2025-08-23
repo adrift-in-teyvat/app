@@ -34,9 +34,39 @@ const tileRanges = [
 ];
 const zoomLevelSizes = [256, 128, 64, 32, 16, 8];
 const teyvatTiles = `${giMapTiles}/teyvat`;
+
+class MapTile extends PIXI.Graphics {
+  promiseReject: (reason?: string) => void;
+  constructor(parent: PIXI.Container, url: string, x: number, y: number, size: number) {
+    super();
+
+    this.promiseReject = () => {};
+    (async () => {
+      try {
+        await new Promise((resolve, reject) => {
+          this.promiseReject = reject;
+          (async () => {
+            await PIXI.Assets.load(url);
+            this.texture(PIXI.Assets.get(url), 0xffffff, x, y, size, size);
+            parent.addChild(this);
+          })()
+            .then(resolve)
+            .catch(reject);
+        });
+      } catch {}
+    })();
+  }
+  delete() {
+    try {
+      this.promiseReject();
+      this.destroy();
+    } catch {}
+  }
+}
+
 let currentZoom = 0;
 // stored in form of `${zoomLevel}_${x}_${y}`
-const tiles: Record<string, PIXI.Graphics> = {};
+const tiles: Record<string, MapTile> = {};
 
 const drawMap = (viewport: Viewport, layers: PIXI.Container[], zoom: number) => {
   const xMin = Math.floor(viewport.left / zoomLevelSizes[zoom]);
@@ -49,13 +79,23 @@ const drawMap = (viewport: Viewport, layers: PIXI.Container[], zoom: number) => 
     const [min, max] = tileRanges[zoom].x;
     return n >= min && n <= max;
   });
-  const yTiles = Array.from({ length: yCount * 2 + 1 }, (_, i) => -1 * (yMin + i)).filter((n) => {
-    const [min, max] = tileRanges[zoom].y;
-    return n >= min && n <= max;
-  });
+  const yTiles = Array.from({ length: yCount * 2 + 1 }, (_, i) => -1 * (yMin + i))
+    .map((n) => (n === 0 ? 0 : n))
+    .filter((n) => {
+      const [min, max] = tileRanges[zoom].y;
+      return n >= min && n <= max;
+    });
+  console.log(yTiles);
 
   for (const i in layers) {
-    layers[i].visible = zoom === +i;
+    layers[i].visible = zoom >= +i;
+  }
+
+  for (const [key, tile] of Object.entries(tiles)) {
+    if (!xTiles.includes(parseInt(key.split("_")[1])) || !yTiles.includes(parseInt(key.split("_")[2]))) {
+      tile.delete();
+      delete tiles[key];
+    }
   }
 
   for (const x of xTiles) {
@@ -66,23 +106,13 @@ const drawMap = (viewport: Viewport, layers: PIXI.Container[], zoom: number) => 
 
       const url = `${teyvatTiles}/${zoomLevelLinks[zoom]}/${x}_${y}.jpg`;
 
-      (async () => {
-        let tile = tiles[`${zoom}_${x}_${y}`];
-        if (!tile) {
-          await PIXI.Assets.load(url);
-          tile = new PIXI.Graphics();
-          tile.cullable = true;
-          tile.texture(PIXI.Assets.get(url));
-          layers[zoom].addChild(tile);
-          tile.position.set(xPos, yPos);
-          tile.setSize(zoomLevelSizes[zoom], zoomLevelSizes[zoom]);
-          tiles[`${zoom}_${x}_${y}`] = tile;
-        }
-      })();
+      if (!tiles[`${zoom}_${x}_${y}`]) {
+        tiles[`${zoom}_${x}_${y}`] = new MapTile(layers[zoom], url, xPos, yPos, zoomLevelSizes[zoom]);
+      }
     }
   }
 };
-const throttledDrawMap = throttle(drawMap, 100);
+const throttledDrawMap = throttle(drawMap, 100, true);
 
 export function Map() {
   useEffect(() => {
