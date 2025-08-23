@@ -1,0 +1,118 @@
+.ar {
+  fill: #2a2826;
+}
+
+.as,
+.at,
+.au {
+  opacity: 0.3;
+}
+
+.av {
+  fill: #575348;
+}
+
+.aw {
+  fill: #fff;
+}
+
+.ax {
+  fill: url(#d);
+}
+
+.ay {
+  fill: #c6ad9d;
+}
+
+.az {
+  fill: #8e6e62;
+}
+
+.ba {
+  fill: #494741;
+}
+
+.bb {
+  fill: #ee9f6d;
+}
+
+.bc {
+  fill: #82b5e8;
+}
+
+.at,
+.bd {
+  fill: #edc0b7;
+}
+
+.aw,
+.bd {
+  opacity: 0.2;
+}
+
+.bf {
+  fill: #5f5754;
+}
+
+.bg {
+  fill: #52291a;
+}
+
+.bh {
+  opacity: 0.07;
+}
+
+.bh,
+.bi {
+  fill: #211917;
+}
+
+.bj {
+  opacity: 0.5;
+}
+
+.bj,
+.au {
+  fill: #0c0a08;
+}
+
+.bk {
+  fill: #e8caae;
+}
+
+.bl {
+  fill: #f8ecdf;
+}
+
+.bm {
+  fill: #6b9ed1;
+}
+
+.bn {
+  fill: #35332c;
+}
+
+.bi {
+  opacity: 0.25;
+}
+
+.bo {
+  fill: #df7b4d;
+}
+
+.bp {
+  fill: #bc9184;
+}
+
+.bq {
+  fill: #ffdacc;
+}
+
+.br {
+  fill: #fff;
+}
+
+/* force gpu render */
+svg {
+  transform: translateZ(1px);
+}

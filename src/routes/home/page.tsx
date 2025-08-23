@@ -1,5 +1,5 @@
 import "../../index.css";
-import { HomePageBg, HomePageText } from "../../Components/HomePageBg";
+import { HomePageBg, HomePageText } from "../../components/HomePageBg";
 import { useLocation } from "preact-iso";
 
 function Home() {

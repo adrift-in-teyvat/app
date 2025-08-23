@@ -1,8 +1,8 @@
 import { LocationProvider, Router, Route, hydrate, prerender as ssr } from "preact-iso";
 
 import "./index.css";
-import Home from "./routes/Home/Home.tsx";
-import Game from "./routes/Game/Game.tsx";
+import Home from "./routes/home/page.tsx";
+import Game from "./routes/game/page.tsx";
 
 export const App = () => {
   return (
