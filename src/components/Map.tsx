@@ -48,7 +48,20 @@ class MapTile extends PIXI.Graphics {
           (async () => {
             await PIXI.Assets.load(url);
             this.texture(PIXI.Assets.get(url), 0xffffff, x, y, size, size);
+            this.alpha = 0;
             parent.addChild(this);
+
+            const fadeIn = (time?: number, prevTime?: number) => {
+              if (time && prevTime) {
+                this.alpha += (time - prevTime) / 200;
+              }
+              if (this.alpha < 1) {
+                requestAnimationFrame((t) => fadeIn(t, time));
+              } else {
+                this.alpha = 1;
+              }
+            };
+            fadeIn();
           })()
             .then(() => {
               resolve();
@@ -62,6 +75,7 @@ class MapTile extends PIXI.Graphics {
       } catch {}
     })();
   }
+
   delete() {
     try {
       this.promiseReject();
@@ -92,11 +106,10 @@ const drawMap = (viewport: Viewport, layers: PIXI.Container[], zoom: number) => 
       return n >= min && n <= max;
     });
 
-  for (const i in layers) {
-    layers[i].visible = zoom >= +i;
-  }
-
   for (const [key, tile] of Object.entries(tiles)) {
+    if (parseInt(key.split("_")[0]) !== zoom) {
+      continue;
+    }
     if (!xTiles.includes(parseInt(key.split("_")[1])) || !yTiles.includes(parseInt(key.split("_")[2]))) {
       tile.delete();
       delete tiles[key];
@@ -124,7 +137,15 @@ const drawMap = (viewport: Viewport, layers: PIXI.Container[], zoom: number) => 
     }
   }
 };
-const throttledDrawMap = throttle(drawMap, 300, true);
+const batchDrawMap = (viewport: Viewport, layers: PIXI.Container[], zoom: number) => {
+  for (const i in layers) {
+    layers[i].visible = zoom >= +i;
+  }
+  for (let i = 0; i <= zoom; i++) {
+    drawMap(viewport, layers, i);
+  }
+};
+const throttledDrawMap = throttle(batchDrawMap, 300, true);
 
 export function Map() {
   useEffect(() => {
