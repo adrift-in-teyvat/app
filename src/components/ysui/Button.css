@@ -1,0 +1,26 @@
+@reference "../../index.css";
+
+@layer components {
+  .ys-button {
+    @apply flex flex-row items-center p-1.5 border-2 border-transparent rounded-full w-full text-[#ece5d8] text-center transition-colors cursor-pointer;
+    background: #4a5366;
+    letter-spacing: 0.0125rem;
+    box-shadow: 0 0 1rem #0001;
+
+    & svg {
+      @apply transition-[filter];
+    }
+  }
+  .ys-button:hover {
+    border-color: #fde5b4;
+  }
+  .ys-button:active {
+    background: #ffeccc;
+    color: #a29379;
+    border-color: #b9b4ab;
+
+    & svg {
+      filter: brightness(1.8) contrast(0.5) sepia(1);
+    }
+  }
+}

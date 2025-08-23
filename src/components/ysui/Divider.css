@@ -1,0 +1,14 @@
+@reference "../../index.css";
+
+@layer components {
+  .ys-divider {
+    @apply flex flex-row justify-center items-center w-full;
+    height: 10px;
+  }
+  .ys-divider-line {
+    @apply border-[#dad2c5] border-t-[1.25px] grow;
+  }
+  .ys-divider-opp {
+    @apply -scale-x-100;
+  }
+}
