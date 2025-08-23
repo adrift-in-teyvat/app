@@ -43,15 +43,21 @@ class MapTile extends PIXI.Graphics {
     this.promiseReject = () => {};
     (async () => {
       try {
-        await new Promise((resolve, reject) => {
+        await new Promise<void>((resolve, reject) => {
           this.promiseReject = reject;
           (async () => {
             await PIXI.Assets.load(url);
             this.texture(PIXI.Assets.get(url), 0xffffff, x, y, size, size);
             parent.addChild(this);
           })()
-            .then(resolve)
-            .catch(reject);
+            .then(() => {
+              resolve();
+              this.promiseReject = () => {};
+            })
+            .catch(() => {
+              reject();
+              this.promiseReject = () => {};
+            });
         });
       } catch {}
     })();
@@ -97,6 +103,13 @@ const drawMap = (viewport: Viewport, layers: PIXI.Container[], zoom: number) => 
     }
   }
 
+  const urls = [];
+  for (const x of xTiles) {
+    for (const y of yTiles) {
+      urls.push(`${teyvatTiles}/${zoomLevelLinks[zoom]}/${x}_${y}.jpg`);
+    }
+  }
+  PIXI.Assets.load(urls);
   for (const x of xTiles) {
     let xPos = zoomLevelSizes[zoom] * x;
 
@@ -111,7 +124,7 @@ const drawMap = (viewport: Viewport, layers: PIXI.Container[], zoom: number) => 
     }
   }
 };
-const throttledDrawMap = throttle(drawMap, 100, true);
+const throttledDrawMap = throttle(drawMap, 300, true);
 
 export function Map() {
   useEffect(() => {
@@ -154,13 +167,20 @@ export function Map() {
           }
         });
         viewport.addListener("zoomed-end", () => {
-          // clamp between level 0 and level 4, level 5 disallowed for performance reasons
-          currentZoom = Math.max(0, Math.min(4, Math.round(viewport.scale.x / 2)));
+          currentZoom = Math.max(0, Math.min(4, Math.floor(Math.sqrt(viewport.scale.x - 1)) + 1));
           throttledDrawMap(viewport, layers, currentZoom);
         });
 
         app.stage.addChild(viewport);
-        viewport.drag().pinch().wheel().decelerate().setZoom(1).clampZoom({ maxScale: 18, minScale: 1 });
+        viewport
+          .drag()
+          .pinch()
+          .wheel({
+            smooth: 10,
+          })
+          .decelerate()
+          .setZoom(1)
+          .clampZoom({ maxScale: 18, minScale: 1 });
         app.renderer.addListener("resize", () => {
           viewport.screenHeight = window.innerHeight;
           viewport.screenWidth = window.innerWidth;
@@ -170,7 +190,10 @@ export function Map() {
         setInterval(() => {
           if (!viewport.moving) return;
           throttledDrawMap(viewport, layers, currentZoom);
-        }, 100);
+        }, 300);
+        setInterval(() => {
+          throttledDrawMap(viewport, layers, currentZoom);
+        }, 1000);
       });
   }, []);
 
