@@ -48,20 +48,7 @@ class MapTile extends PIXI.Graphics {
           (async () => {
             await PIXI.Assets.load(url);
             this.texture(PIXI.Assets.get(url), 0xffffff, x, y, size, size);
-            this.alpha = 0;
             parent.addChild(this);
-
-            const fadeIn = (time?: number, prevTime?: number) => {
-              if (time && prevTime) {
-                this.alpha += (time - prevTime) / 200;
-              }
-              if (this.alpha < 1) {
-                requestAnimationFrame((t) => fadeIn(t, time));
-              } else {
-                this.alpha = 1;
-              }
-            };
-            fadeIn();
           })()
             .then(() => {
               resolve();
@@ -88,7 +75,7 @@ let currentZoom = 0;
 // stored in form of `${zoomLevel}_${x}_${y}`
 const tiles: Record<string, MapTile> = {};
 
-const drawMap = (viewport: Viewport, layers: PIXI.Container[], zoom: number) => {
+const drawMap = async (viewport: Viewport, layers: PIXI.Container[], zoom: number, prioritize: boolean) => {
   const xMin = Math.floor(viewport.left / zoomLevelSizes[zoom]);
   const xMax = Math.ceil(viewport.right / zoomLevelSizes[zoom]);
   const yMin = Math.floor(viewport.top / zoomLevelSizes[zoom]);
@@ -122,19 +109,23 @@ const drawMap = (viewport: Viewport, layers: PIXI.Container[], zoom: number) => 
       urls.push(`${teyvatTiles}/${zoomLevelLinks[zoom]}/${x}_${y}.jpg`);
     }
   }
-  PIXI.Assets.load(urls);
-  for (const x of xTiles) {
-    let xPos = zoomLevelSizes[zoom] * x;
+  if (prioritize) {
+    PIXI.Assets.load(urls);
+    for (const x of xTiles) {
+      let xPos = zoomLevelSizes[zoom] * x;
 
-    for (const y of yTiles) {
-      const yPos = -1 * zoomLevelSizes[zoom] * (y + 1);
+      for (const y of yTiles) {
+        const yPos = -1 * zoomLevelSizes[zoom] * (y + 1);
 
-      const url = `${teyvatTiles}/${zoomLevelLinks[zoom]}/${x}_${y}.jpg`;
+        const url = `${teyvatTiles}/${zoomLevelLinks[zoom]}/${x}_${y}.jpg`;
 
-      if (!tiles[`${zoom}_${x}_${y}`]) {
-        tiles[`${zoom}_${x}_${y}`] = new MapTile(layers[zoom], url, xPos, yPos, zoomLevelSizes[zoom]);
+        if (!tiles[`${zoom}_${x}_${y}`]) {
+          tiles[`${zoom}_${x}_${y}`] = new MapTile(layers[zoom], url, xPos, yPos, zoomLevelSizes[zoom]);
+        }
       }
     }
+  } else {
+    PIXI.Assets.backgroundLoad(urls);
   }
 };
 const batchDrawMap = (viewport: Viewport, layers: PIXI.Container[], zoom: number) => {
@@ -142,7 +133,7 @@ const batchDrawMap = (viewport: Viewport, layers: PIXI.Container[], zoom: number
     layers[i].visible = zoom >= +i;
   }
   for (let i = 0; i <= zoom; i++) {
-    drawMap(viewport, layers, i);
+    drawMap(viewport, layers, i, i === zoom);
   }
 };
 const throttledDrawMap = throttle(batchDrawMap, 300, { trailing: true });
@@ -192,7 +183,7 @@ export function Map() {
           (e: WheelEvent) => {
             e.stopImmediatePropagation();
           },
-          150,
+          170,
           { invert: true }
         );
         app.canvas.addEventListener("wheel", wheelThrottler, { capture: true });
@@ -207,17 +198,17 @@ export function Map() {
           .pinch()
           .wheel({
             smooth: 10,
-            percent: 2,
+            percent: 4,
           })
           .decelerate()
           .setZoom(1)
-          .clampZoom({ maxScale: 18, minScale: 1 });
+          .clampZoom({ maxScale: 15, minScale: 1 });
         app.renderer.addListener("resize", () => {
           viewport.screenHeight = window.innerHeight;
           viewport.screenWidth = window.innerWidth;
         });
 
-        drawMap(viewport, layers, currentZoom);
+        drawMap(viewport, layers, currentZoom, true);
         setInterval(() => {
           if (!viewport.moving) return;
           throttledDrawMap(viewport, layers, currentZoom);
