@@ -145,7 +145,7 @@ const batchDrawMap = (viewport: Viewport, layers: PIXI.Container[], zoom: number
     drawMap(viewport, layers, i);
   }
 };
-const throttledDrawMap = throttle(batchDrawMap, 300, true);
+const throttledDrawMap = throttle(batchDrawMap, 300, { trailing: true });
 
 export function Map() {
   useEffect(() => {
@@ -187,6 +187,15 @@ export function Map() {
             throttledDrawMap(viewport, layers, currentZoom);
           }
         });
+
+        const wheelThrottler = throttle(
+          (e: WheelEvent) => {
+            e.stopImmediatePropagation();
+          },
+          150,
+          { invert: true }
+        );
+        app.canvas.addEventListener("wheel", wheelThrottler, { capture: true });
         viewport.addListener("zoomed-end", () => {
           currentZoom = Math.max(0, Math.min(4, Math.floor(Math.sqrt(viewport.scale.x - 1)) + 1));
           throttledDrawMap(viewport, layers, currentZoom);
@@ -198,6 +207,7 @@ export function Map() {
           .pinch()
           .wheel({
             smooth: 10,
+            percent: 2,
           })
           .decelerate()
           .setZoom(1)
