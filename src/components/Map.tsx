@@ -183,7 +183,7 @@ export function Map() {
           (e: WheelEvent) => {
             e.stopImmediatePropagation();
           },
-          170,
+          100,
           { invert: true }
         );
         app.canvas.addEventListener("wheel", wheelThrottler, { capture: true });
